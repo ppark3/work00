@@ -1,40 +1,38 @@
 var canvas = document.getElementById("slate");
 var context = canvas.getContext("2d");
 var clear = document.getElementById("clear");
-var toggle = document.getElementById("toggle");
 var rect = canvas.getBoundingClientRect();
-var circle = true;
+var started = false;
+context.fillStyle="#00FFFF"
 
 var shape = function(e){
-	var x = e.clientX - rect.left;
-	var y = e.clientY - rect.top;
-	console.log(x);
-	console.log(y);
-	if (circle){
-		context.beginPath();
-		context.arc(x, y, 10, 0, 2 * Math.PI);
-		context.stroke();
-	}
-	else{
-		context.beginPath();
-		context.rect(x, y, 25, 25);
-		context.stroke();
-	}
+    var x = e.offsetX;
+    var y = e.offsetY;
+	context.beginPath();
+    context.arc(x, y, 10, 0, 2 * Math.PI);
+	context.stroke();
+    context.fill();
+}
+
+var line = function(e){
+    var x = e.offsetX;
+    var y = e.offsetY;
+    if (!started){
+	context.beginPath();
+	shape(e);
+	started = true;
+    }
+    else{
+	context.lineTo(x,y);
+	context.stroke();
+	shape(e);
+    }
 }
 
 var clearDrawing = function(){
-	context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    started = false;
 }
 
-var change = function(){
-	if (circle){
-		circle = false;
-	}
-	else {
-		circle = true;
-	}
-}
-
-canvas.addEventListener("click", shape);
+canvas.addEventListener("click", line);
 clear.addEventListener("click", clearDrawing);
-toggle.addEventListener("click", change);
